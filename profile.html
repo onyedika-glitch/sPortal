@@ -11,6 +11,9 @@
 <header>
   <div class="container nav-bar">
     <h1 class="logo">University School Board Portal</h1>
+     <div class="hamburger" onclick="toggleMenu()">
+      ☰
+    </div>
     <nav>
       <a href="dashboard.html">Dashboard</a>
       <a href="profile.html" class="active">Profile</a>
@@ -83,6 +86,20 @@
   function toggleEdit() {
     alert("Profile editing is not yet active. Contact your department administrator for updates.");
   }
+
+  // Toggle navigation menu on small screens
+  function toggleMenu() {
+    const nav = document.querySelector('nav');
+    nav.classList.toggle('active');
+  }
+
+  // Close menu when clicking outside (ignore clicks inside nav or on hamburger)
+  window.addEventListener('click', function(event) {
+    const nav = document.querySelector('nav');
+    if (!event.target.closest('.hamburger') && !event.target.closest('nav') && nav.classList.contains('active')) {
+      nav.classList.remove('active');
+    }
+  });
 </script>
 
 </body>
