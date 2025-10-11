@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Manage Timetables - Admin</title>
+  <link rel="stylesheet" href="../styles/admin.css" />
+</head>
+<body>
+  <div class="admin-container">
+    <aside class="sidebar">
+      <h2 class="logo">FUTO Admin</h2>
+      <nav>
+        <a href="dashboard.html">🏠 Dashboard</a>
+        <a href="announcements.html">📢 Announcements</a>
+        <a href="events.html">🎉 Events</a>
+        <a href="timetable.html" class="active">🕒 Timetable</a>
+        <a href="results.html">📊 Results</a>
+        <a href="profile.html">👤 Profile</a>
+        <a href="login.html" onclick="logout()">🚪 Logout</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <h1>Manage Timetable</h1>
+        <div class="user-info" id="admin-name">Welcome, Admin</div>
+      </header>
+
+      <section>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1rem">
+          <div style="flex:1;min-width:320px">
+            <label><strong>Title (e.g., CS 401 - Week A)</strong></label>
+            <input id="tt-title" placeholder="Timetable title" />
+            <label><strong>Semester / Session</strong></label>
+            <input id="tt-session" placeholder="2025/2026 - First Semester" />
+            <label><strong>Upload Timetable (PDF)</strong></label>
+            <input id="tt-file" type="file" accept=".pdf" />
+            <p class="muted">Upload will be stored as base64 (demo). For production, use server storage.</p>
+            <div style="display:flex;gap:.5rem">
+              <button id="tt-save" class="btn">Add Timetable</button>
+              <button id="tt-clear" class="btn" style="background:#777">Clear</button>
+            </div>
+          </div>
+
+          <div style="flex:1;min-width:260px">
+            <h3>Latest Upload</h3>
+            <div id="tt-preview" class="card" style="min-height:160px">No file selected</div>
+          </div>
+        </div>
+
+        <h3>All Timetables</h3>
+        <div id="tt-list"></div>
+      </section>
+    </main>
+  </div>
+
+<script>
+  if (!localStorage.getItem('admin')) location.href='login.html';
+  document.getElementById('admin-name').textContent = `Welcome, ${localStorage.getItem('admin')}`;
+
+  let timetables = JSON.parse(localStorage.getItem('timetables')||'[]');
+  const t = id => document.getElementById(id);
+  const list = t('tt-list'), preview = t('tt-preview');
+
+  let editIndex = -1;
+  function render(){
+    if(!timetables.length){ list.innerHTML = '<p class="muted">No timetables uploaded.</p>'; return; }
+    list.innerHTML = timetables.map((tt,i)=>`
+      <div class="card" style="margin-bottom:.8rem">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <h4 style="margin:.2rem 0">${escape(tt.title)}</h4>
+            <p class="muted" style="margin:0">${escape(tt.session)}</p>
+          </div>
+          <div style="display:flex;gap:.4rem">
+            <a href="${tt.url}" target="_blank" class="btn">Open</a>
+            <button onclick="startEdit(${i})" class="btn" style="background:#0066cc">Edit</button>
+            <button onclick="del(${i})" class="btn" style="background:#cc3b4f">Delete</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function escape(s){ return String(s||'').replace(/[&<>"]/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' })[c]); }
+
+  async function fileToBase64(file){
+    return new Promise((res,rej)=>{
+      const reader = new FileReader();
+      reader.onload = ()=>res(reader.result);
+      reader.onerror = ()=>rej();
+      reader.readAsDataURL(file);
+    });
+  }
+
+  t('tt-file').addEventListener('change', async (e)=>{
+    const f = e.target.files[0];
+    if(!f) { preview.innerHTML = 'No file selected'; return; }
+    const b = await fileToBase64(f);
+    preview.innerHTML = `<strong>${f.name}</strong><p class="muted">${Math.round(f.size/1024)} KB</p><a href="${b}" target="_blank" class="btn">Open</a>`;
+    preview.dataset.url = b;
+  });
+
+  t('tt-save').addEventListener('click', ()=>{
+    const title = t('tt-title').value.trim(); const session = t('tt-session').value.trim();
+    const url = preview.dataset.url;
+    if(!title || !session || !url){ alert('Title, session and file required'); return; }
+    const obj = { title, session, url };
+    if(editIndex>-1){ timetables[editIndex]=obj; editIndex=-1; t('tt-save').textContent='Add Timetable'; }
+    else timetables.unshift(obj);
+    localStorage.setItem('timetables', JSON.stringify(timetables));
+    clearForm(); render();
+  });
+
+  t('tt-clear').addEventListener('click', clearForm);
+  function clearForm(){ t('tt-title').value=''; t('tt-session').value=''; t('tt-file').value=''; preview.innerHTML='No file selected'; delete preview.dataset.url; t('tt-save').textContent='Add Timetable'; }
+
+  function startEdit(i){
+    const tt = timetables[i];
+    t('tt-title').value = tt.title; t('tt-session').value = tt.session;
+    preview.innerHTML = `<strong>${tt.title}</strong><p class="muted">${tt.session}</p><a href="${tt.url}" target="_blank" class="btn">Open</a>`;
+    preview.dataset.url = tt.url;
+    editIndex = i; t('tt-save').textContent='Save Changes'; window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function del(i){ if(!confirm('Delete timetable?')) return; timetables.splice(i,1); localStorage.setItem('timetables',JSON.stringify(timetables)); render(); }
+
+  render();
+
+  function logout(){ localStorage.removeItem('admin'); location.href='login.html'; }
+</script>
+<script src="../scripts/admin.js"></script>
+
+</body>
+</html>

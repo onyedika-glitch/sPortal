@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Manage Events - Admin</title>
+  <link rel="stylesheet" href="../styles/admin.css" />
+</head>
+<body>
+  <div class="admin-container">
+    <aside class="sidebar">
+      <h2 class="logo">FUTO Admin</h2>
+      <nav>
+        <a href="dashboard.html">🏠 Dashboard</a>
+        <a href="announcements.html">📢 Announcements</a>
+        <a href="events.html" class="active">🎉 Events</a>
+        <a href="timetable.html">🕒 Timetable</a>
+        <a href="results.html">📊 Results</a>
+        <a href="profile.html">👤 Profile</a>
+        <a href="login.html" onclick="logout()">🚪 Logout</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <h1>Manage Events</h1>
+        <div class="user-info" id="admin-name">Welcome, Admin</div>
+      </header>
+
+      <section>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1rem">
+          <div style="flex:1;min-width:260px">
+            <label><strong>Event Title</strong></label>
+            <input id="ev-title" placeholder="Event name" />
+            <label><strong>Type</strong></label>
+            <select id="ev-type">
+              <option value="Academic">Academic</option>
+              <option value="Social">Social</option>
+              <option value="Sports">Sports</option>
+              <option value="Other">Other</option>
+            </select>
+            <label style="display:flex;gap:.5rem">
+              <div style="flex:1">
+                <strong>Start</strong><input id="ev-start" type="date" />
+              </div>
+              <div style="flex:1">
+                <strong>End</strong><input id="ev-end" type="date" />
+              </div>
+            </label>
+            <label><strong>Venue</strong></label>
+            <input id="ev-venue" placeholder="Venue" />
+            <label><strong>Description</strong></label>
+            <textarea id="ev-desc" rows="4"></textarea>
+            <div style="display:flex;gap:.5rem">
+              <button id="ev-save" class="btn">Add Event</button>
+              <button id="ev-clear" class="btn" style="background:#777">Clear</button>
+            </div>
+          </div>
+
+          <div style="flex:1;min-width:260px">
+            <h3>Upcoming Preview</h3>
+            <div id="ev-preview" class="card" style="min-height:160px">Fill the form to preview event</div>
+          </div>
+        </div>
+
+        <h3>Event List</h3>
+        <div id="ev-list"></div>
+      </section>
+    </main>
+  </div>
+
+<script>
+  if (!localStorage.getItem('admin')) location.href='login.html';
+  document.getElementById('admin-name').textContent = `Welcome, ${localStorage.getItem('admin')}`;
+
+  let events = JSON.parse(localStorage.getItem('events')||'[]');
+
+  const t = id => document.getElementById(id);
+  const save = t('ev-save'), clearBtn = t('ev-clear'), list = t('ev-list'), preview = t('ev-preview');
+
+  function updatePreview(){
+    const title = t('ev-title').value || 'Untitled';
+    const type = t('ev-type').value || '';
+    const s = t('ev-start').value ? new Date(t('ev-start').value).toLocaleDateString() : '';
+    const e = t('ev-end').value ? new Date(t('ev-end').value).toLocaleDateString() : '';
+    const venue = t('ev-venue').value || '';
+    const desc = t('ev-desc').value || '';
+    preview.innerHTML = `<h4>${escape(title)}</h4><p class="muted">${type} · ${s}${e?(' - '+e):''}</p><p style="margin-top:.6rem">${escape(desc)}<br><strong>${escape(venue)}</strong></p>`;
+  }
+
+  ['ev-title','ev-type','ev-start','ev-end','ev-venue','ev-desc'].forEach(id=>t(id).addEventListener('input', updatePreview));
+
+  let editIndex = -1;
+  function render(){
+    if(!events.length){ list.innerHTML = '<p class="muted">No events yet.</p>'; return; }
+    list.innerHTML = events.map((ev,i)=>`
+      <div class="card" style="margin-bottom:.8rem">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <h4 style="margin:.2rem 0">${escape(ev.title)}</h4>
+            <p class="muted" style="margin:0">${escape(ev.type)} · ${ev.start?ev.start:''}${ev.end?(' - '+ev.end):''}</p>
+            <p style="margin:.3rem 0 0"><strong>${escape(ev.venue)}</strong></p>
+          </div>
+          <div style="display:flex;gap:.4rem">
+            <button onclick="startEdit(${i})" class="btn" style="background:#0066cc">Edit</button>
+            <button onclick="del(${i})" class="btn" style="background:#cc3b4f">Delete</button>
+          </div>
+        </div>
+        <p style="margin:.6rem 0 0">${escape(ev.desc)}</p>
+      </div>
+    `).join('');
+  }
+
+  function escape(s){ return String(s||'').replace(/[&<>"]/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' })[c]); }
+
+  save.addEventListener('click', ()=>{
+    const title = t('ev-title').value.trim();
+    const type = t('ev-type').value;
+    const start = t('ev-start').value;
+    const end = t('ev-end').value;
+    const venue = t('ev-venue').value.trim();
+    const desc = t('ev-desc').value.trim();
+    if(!title || !start){ alert('Title and start date required'); return; }
+    const obj = { title, type, start, end, venue, desc };
+    if(editIndex > -1){
+      events[editIndex] = obj; editIndex=-1; save.textContent='Add Event';
+    } else events.unshift(obj);
+    localStorage.setItem('events', JSON.stringify(events));
+    clearForm(); render();
+  });
+
+  clearBtn.addEventListener('click', clearForm);
+  function clearForm(){ ['ev-title','ev-start','ev-end','ev-venue','ev-desc'].forEach(id=>t(id).value=''); t('ev-type').value='Academic'; save.textContent='Add Event'; updatePreview(); }
+
+  function startEdit(i){
+    const ev = events[i];
+    t('ev-title').value = ev.title; t('ev-type').value = ev.type; t('ev-start').value = ev.start; t('ev-end').value = ev.end; t('ev-venue').value = ev.venue; t('ev-desc').value = ev.desc;
+    editIndex = i; save.textContent='Save Changes'; updatePreview(); window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function del(i){ if(!confirm('Delete event?')) return; events.splice(i,1); localStorage.setItem('events',JSON.stringify(events)); render(); }
+
+  render(); updatePreview();
+
+  function logout(){ localStorage.removeItem('admin'); location.href='login.html'; }
+</script>
+<script src="../scripts/admin.js"></script>
+
+</body>
+</html>

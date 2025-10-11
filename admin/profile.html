@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin Profile - Admin</title>
+  <link rel="stylesheet" href="../styles/admin.css" />
+</head>
+<body>
+  <div class="admin-container">
+    <aside class="sidebar">
+      <h2 class="logo">FUTO Admin</h2>
+      <nav>
+        <a href="dashboard.html">🏠 Dashboard</a>
+        <a href="announcements.html">📢 Announcements</a>
+        <a href="events.html">🎉 Events</a>
+        <a href="timetable.html">🕒 Timetable</a>
+        <a href="results.html">📊 Results</a>
+        <a href="profile.html" class="active">👤 Profile</a>
+        <a href="login.html" onclick="logout()">🚪 Logout</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <h1>Admin Profile</h1>
+        <div class="user-info" id="admin-name">Welcome, Admin</div>
+      </header>
+
+      <section>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+          <div style="flex:1;min-width:320px">
+            <label><strong>Full Name</strong></label>
+            <input id="p-name" placeholder="Full name" />
+            <label><strong>Email</strong></label>
+            <input id="p-email" type="email" placeholder="admin@university.edu" />
+            <label><strong>Phone</strong></label>
+            <input id="p-phone" placeholder="+234 8xx xxx xxxx" />
+            <label><strong>Username</strong></label>
+            <input id="p-username" placeholder="admin" />
+            <label><strong>New Password (leave empty to keep)</strong></label>
+            <input id="p-pass" type="password" placeholder="••••••••" />
+            <div style="display:flex;gap:.5rem;margin-top:.6rem">
+              <button id="p-save" class="btn">Save Profile</button>
+              <button id="p-reset" class="btn" style="background:#777">Reset</button>
+            </div>
+          </div>
+
+          <div style="flex:1;min-width:260px">
+            <h3>Profile Summary</h3>
+            <div id="p-summary" class="card" style="min-height:240px">No profile saved yet</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+<script>
+  if (!localStorage.getItem('admin')) location.href='login.html';
+  const adminNameEl = document.getElementById('admin-name');
+  adminNameEl.textContent = `Welcome, ${localStorage.getItem('admin')}`;
+
+  const get = id => document.getElementById(id);
+  const summary = get('p-summary');
+
+  let profile = JSON.parse(localStorage.getItem('adminProfile') || '{}');
+
+  function renderProfile(){
+    get('p-name').value = profile.name || localStorage.getItem('admin') || '';
+    get('p-email').value = profile.email || '';
+    get('p-phone').value = profile.phone || '';
+    get('p-username').value = profile.username || localStorage.getItem('admin') || '';
+    summary.innerHTML = `<p><strong>Name:</strong> ${escape(profile.name || '')}</p>
+      <p><strong>Email:</strong> ${escape(profile.email || '')}</p>
+      <p><strong>Phone:</strong> ${escape(profile.phone || '')}</p>
+      <p><strong>Username:</strong> ${escape(profile.username || '')}</p>`;
+  }
+
+  function escape(s){ return String(s||'').replace(/[&<>"]/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' })[c]); }
+
+  get('p-save').addEventListener('click', ()=>{
+    const name = get('p-name').value.trim();
+    const email = get('p-email').value.trim();
+    const phone = get('p-phone').value.trim();
+    const username = get('p-username').value.trim();
+    const pass = get('p-pass').value;
+    if(!name || !username){ alert('Name and username required'); return; }
+    profile = { name, email, phone, username };
+    if(pass) profile.password = pass; // stored locally only (demo)
+    localStorage.setItem('adminProfile', JSON.stringify(profile));
+    localStorage.setItem('admin', username); // update logged-in name
+    adminNameEl.textContent = `Welcome, ${username}`;
+    renderProfile();
+    alert('Profile saved (demo storage). For real app, save on server.');
+  });
+
+  get('p-reset').addEventListener('click', ()=>{
+    if(!confirm('Reset profile fields?')) return;
+    get('p-name').value=''; get('p-email').value=''; get('p-phone').value=''; get('p-username').value=''; get('p-pass').value='';
+  });
+
+  renderProfile();
+
+  function logout(){ localStorage.removeItem('admin'); location.href='login.html'; }
+</script>
+<script src="../scripts/admin.js"></script>
+
+</body>
+</html>

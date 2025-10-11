@@ -351,6 +351,20 @@ button:hover{background:#003d8a}
   }
 }
 
+nav a.admin-link {
+  background: white;
+  color: #ff4d94;
+  border: 2px solid #ff4d94;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+nav a.admin-link:hover {
+  background: #ff80b3;
+  color: white;
+  border-color: #ff80b3;
+}
 
 
 

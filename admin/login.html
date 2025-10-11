@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Admin Login - University School Board Portal</title>
+  <link rel="stylesheet" href="../styles/admin.css" />
+  <style>
+    body {
+      background: linear-gradient(135deg, #ff80b3, #ffb3cc);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: #333;
+    }
+
+    .login-card {
+      background: #fff;
+      width: 100%;
+      max-width: 400px;
+      border-radius: 20px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .login-card h1 {
+      margin-bottom: 1rem;
+      color: #ff4d94;
+    }
+
+    .login-card input {
+      width: 100%;
+      padding: 0.8rem;
+      margin: 0.5rem 0;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    .login-card button {
+      background: #ff80b3;
+      border: none;
+      color: white;
+      padding: 0.8rem 1.2rem;
+      border-radius: 8px;
+      width: 100%;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: 0.3s;
+    }
+
+    .login-card button:hover {
+      background: #e66ca0;
+    }
+
+    .note {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-card">
+    <h1>Admin Login</h1>
+    <form id="loginForm">
+      <input type="text" id="username" placeholder="Username" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <button type="submit">Login</button>
+    </form>
+    <p class="note">Demo: Username <b>admin</b>, Password <b>12345</b></p>
+  </div>
+
+  <script src="../scripts/admin.js"></script>
+  <script>
+    const form = document.getElementById('loginForm');
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      if (username === 'admin' && password === '12345') {
+        localStorage.setItem('admin', username);
+        window.location.href = 'dashboard.html';
+      } else {
+        alert('Invalid credentials. Please try again.');
+      }
+    });
+  </script>
+<script src="../scripts/admin.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Manage Results - Admin</title>
+  <link rel="stylesheet" href="../styles/admin.css" />
+</head>
+<body>
+  <div class="admin-container">
+    <aside class="sidebar">
+      <h2 class="logo">FUTO Admin</h2>
+      <nav>
+        <a href="dashboard.html">🏠 Dashboard</a>
+        <a href="announcements.html">📢 Announcements</a>
+        <a href="events.html">🎉 Events</a>
+        <a href="timetable.html">🕒 Timetable</a>
+        <a href="results.html" class="active">📊 Results</a>
+        <a href="profile.html">👤 Profile</a>
+        <a href="login.html" onclick="logout()">🚪 Logout</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <h1>Manage Results</h1>
+        <div class="user-info" id="admin-name">Welcome, Admin</div>
+      </header>
+
+      <section>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1rem">
+          <div style="flex:1;min-width:300px">
+            <label><strong>Student Matric No</strong></label>
+            <input id="res-mat" placeholder="2022xxxxx" />
+            <label><strong>Course Code</strong></label>
+            <input id="res-course" placeholder="CSC401" />
+            <label><strong>Score (%)</strong></label>
+            <input id="res-score" type="number" min="0" max="100" />
+            <label><strong>Remarks (optional)</strong></label>
+            <input id="res-remarks" placeholder="A, B, Pass, Fail..." />
+            <div style="display:flex;gap:.5rem">
+              <button id="res-save" class="btn">Add Result</button>
+              <button id="res-clear" class="btn" style="background:#777">Clear</button>
+            </div>
+            <p class="muted">Note: This is a demo. For production, results must be stored securely on server.</p>
+          </div>
+
+          <div style="flex:1;min-width:260px">
+            <h3>Last Entry Preview</h3>
+            <div id="res-preview" class="card" style="min-height:160px">No data</div>
+          </div>
+        </div>
+
+        <h3>Results Table</h3>
+        <div id="res-list"></div>
+      </section>
+    </main>
+  </div>
+
+<script>
+  if (!localStorage.getItem('admin')) location.href='login.html';
+  document.getElementById('admin-name').textContent = `Welcome, ${localStorage.getItem('admin')}`;
+
+  let results = JSON.parse(localStorage.getItem('results')||'[]');
+  const t = id => document.getElementById(id);
+  const list = t('res-list'), preview = t('res-preview');
+
+  function updatePreview(){
+    const mat = t('res-mat').value || '';
+    const course = t('res-course').value || '';
+    const score = t('res-score').value || '';
+    const rem = t('res-remarks').value || '';
+    preview.innerHTML = `<p><strong>${escape(mat)}</strong> · ${escape(course)}</p><p style="margin:.4rem 0"><strong>Score:</strong> ${escape(score)}</p><p class="muted">${escape(rem)}</p>`;
+  }
+
+  ['res-mat','res-course','res-score','res-remarks'].forEach(id=>t(id).addEventListener('input', updatePreview));
+
+  let editIndex = -1;
+  function render(){
+    if(!results.length){ list.innerHTML = '<p class="muted">No results recorded.</p>'; return; }
+    list.innerHTML = `<table style="width:100%;border-collapse:collapse">
+      <thead><tr style="background:#fff"><th style="padding:.6rem;border:1px solid #eee">Matric No</th><th style="padding:.6rem;border:1px solid #eee">Course</th><th style="padding:.6rem;border:1px solid #eee">Score</th><th style="padding:.6rem;border:1px solid #eee">Remarks</th><th style="padding:.6rem;border:1px solid #eee">Actions</th></tr></thead>
+      <tbody>${results.map((r,i)=>`
+        <tr>
+          <td style="padding:.6rem;border:1px solid #eee">${escape(r.mat)}</td>
+          <td style="padding:.6rem;border:1px solid #eee">${escape(r.course)}</td>
+          <td style="padding:.6rem;border:1px solid #eee">${escape(r.score)}</td>
+          <td style="padding:.6rem;border:1px solid #eee">${escape(r.remarks)}</td>
+          <td style="padding:.6rem;border:1px solid #eee">
+            <button onclick="startEdit(${i})" class="btn" style="background:#0066cc">Edit</button>
+            <button onclick="del(${i})" class="btn" style="background:#cc3b4f">Delete</button>
+          </td>
+        </tr>`).join('')}</tbody></table>`;
+  }
+
+  function escape(s){ return String(s||'').replace(/[&<>"]/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' })[c]); }
+
+  t('res-save').addEventListener('click', ()=>{
+    const mat = t('res-mat').value.trim();
+    const course = t('res-course').value.trim();
+    const score = Number(t('res-score').value);
+    const remarks = t('res-remarks').value.trim();
+    if(!mat || !course || isNaN(score)) { alert('Matric number, course and numeric score required'); return; }
+    const obj = { mat, course, score, remarks };
+    if(editIndex>-1){ results[editIndex]=obj; editIndex=-1; t('res-save').textContent='Add Result'; }
+    else results.unshift(obj);
+    localStorage.setItem('results', JSON.stringify(results));
+    clearForm(); render();
+  });
+
+  t('res-clear').addEventListener('click', clearForm);
+  function clearForm(){ ['res-mat','res-course','res-score','res-remarks'].forEach(id=>t(id).value=''); t('res-save').textContent='Add Result'; updatePreview(); }
+
+  function startEdit(i){
+    const r = results[i]; t('res-mat').value=r.mat; t('res-course').value=r.course; t('res-score').value=r.score; t('res-remarks').value=r.remarks; editIndex=i; t('res-save').textContent='Save Changes'; updatePreview(); window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function del(i){ if(!confirm('Delete this result?')) return; results.splice(i,1); localStorage.setItem('results',JSON.stringify(results)); render(); }
+
+  render(); updatePreview();
+
+  function logout(){ localStorage.removeItem('admin'); location.href='login.html'; }
+</script>
+<script src="../scripts/admin.js"></script>
+
+</body>
+</html>

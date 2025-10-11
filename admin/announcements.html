@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Manage Announcements - Admin</title>
+  <link rel="stylesheet" href="../styles/admin.css" />
+</head>
+<body>
+  <div class="admin-container">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <h2 class="logo">FUTO Admin</h2>
+      <nav>
+        <a href="dashboard.html">🏠 Dashboard</a>
+        <a href="announcements.html" class="active">📢 Announcements</a>
+        <a href="events.html">🎉 Events</a>
+        <a href="timetable.html">🕒 Timetable</a>
+        <a href="results.html">📊 Results</a>
+        <a href="profile.html">👤 Profile</a>
+        <a href="login.html" onclick="logout()">🚪 Logout</a>
+      </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main-content">
+      <header class="topbar">
+        
+        <h1>Manage Announcements</h1>
+        <div class="user-info" id="admin-name">Welcome, Admin</div>
+      </header>
+
+      <section>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1rem">
+          <div style="flex:1;min-width:260px">
+            <label><strong>Title</strong></label>
+            <input id="title" placeholder="Announcement title" />
+            <label><strong>Date</strong></label>
+            <input id="date" type="date" />
+            <label><strong>Content</strong></label>
+            <textarea id="content" rows="5" placeholder="Write announcement..."></textarea>
+            <div style="display:flex;gap:.5rem;">
+              <button id="saveBtn" class="btn">Add Announcement</button>
+              <button id="clearBtn" class="btn" style="background:#777">Clear</button>
+            </div>
+          </div>
+
+          <div style="flex:1;min-width:260px">
+            <h3>Preview</h3>
+            <div id="preview" class="card" style="min-height:160px">Fill the form to preview announcement</div>
+          </div>
+        </div>
+
+        <h3>All Announcements</h3>
+        <div id="list"></div>
+      </section>
+    </main>
+  </div>
+
+<script>
+  // Auth check
+  if (!localStorage.getItem('admin')) location.href = 'login.html';
+  document.getElementById('admin-name').textContent = `Welcome, ${localStorage.getItem('admin')}`;
+
+  // Data
+  let announcements = JSON.parse(localStorage.getItem('announcements') || '[]');
+  const titleEl = document.getElementById('title');
+  const dateEl = document.getElementById('date');
+  const contentEl = document.getElementById('content');
+  const preview = document.getElementById('preview');
+  const list = document.getElementById('list');
+  const saveBtn = document.getElementById('saveBtn');
+  const clearBtn = document.getElementById('clearBtn');
+
+  let editIndex = -1;
+
+  function render() {
+    if (!announcements.length) {
+      list.innerHTML = '<p class="muted">No announcements yet.</p>';
+      return;
+    }
+    list.innerHTML = announcements.map((a,i)=>`
+      <div class="card" style="margin-bottom:.8rem">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <h4 style="margin:.2rem 0">${escapeHtml(a.title)}</h4>
+            <p class="muted" style="margin:0">${a.date ? a.date : ''}</p>
+          </div>
+          <div style="display:flex;gap:.4rem">
+            <button onclick="startEdit(${i})" class="btn" style="background:#0066cc">Edit</button>
+            <button onclick="del(${i})" class="btn" style="background:#cc3b4f">Delete</button>
+          </div>
+        </div>
+        <p style="margin:.6rem 0 0">${escapeHtml(a.content)}</p>
+      </div>
+    `).join('');
+  }
+
+  function escapeHtml(s){ return String(s||'').replace(/[&<>"]/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' })[c]); }
+
+  function updatePreview(){
+    const t = titleEl.value.trim() || 'Untitled';
+    const d = dateEl.value ? new Date(dateEl.value).toLocaleDateString() : '';
+    const c = contentEl.value.trim() || '—';
+    preview.innerHTML = `<h4 style="margin:.2rem 0">${escapeHtml(t)}</h4><p class="muted">${d}</p><p style="margin-top:.6rem">${escapeHtml(c)}</p>`;
+  }
+
+  titleEl.addEventListener('input', updatePreview);
+  dateEl.addEventListener('input', updatePreview);
+  contentEl.addEventListener('input', updatePreview);
+
+  clearBtn.addEventListener('click', ()=>{ titleEl.value=''; dateEl.value=''; contentEl.value=''; editIndex=-1; saveBtn.textContent='Add Announcement'; updatePreview(); });
+
+  saveBtn.addEventListener('click', ()=>{
+    const title = titleEl.value.trim();
+    const date = dateEl.value;
+    const content = contentEl.value.trim();
+    if (!title || !content) { alert('Title and content required'); return; }
+
+    if (editIndex > -1) {
+      announcements[editIndex] = { title, date, content };
+      editIndex = -1;
+      saveBtn.textContent = 'Add Announcement';
+    } else {
+      announcements.unshift({ title, date, content });
+    }
+    localStorage.setItem('announcements', JSON.stringify(announcements));
+    titleEl.value=''; dateEl.value=''; contentEl.value='';
+    render(); updatePreview();
+  });
+
+  function startEdit(i){
+    const a = announcements[i];
+    titleEl.value = a.title; dateEl.value = a.date || ''; contentEl.value = a.content;
+    editIndex = i; saveBtn.textContent = 'Save Changes'; updatePreview();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function del(i){
+    if (!confirm('Delete this announcement?')) return;
+    announcements.splice(i,1);
+    localStorage.setItem('announcements', JSON.stringify(announcements));
+    render();
+  }
+
+  // initial
+  render();
+  updatePreview();
+
+  function logout(){ localStorage.removeItem('admin'); location.href='login.html'; }
+</script>
+<script src="../scripts/admin.js"></script>
+
+</body>
+</html>
