@@ -319,32 +319,31 @@ button:hover{background:#003d8a}
   color: white;
 }
 
-/* Mobile View */
 @media (max-width: 768px) {
-  .hamburger {
-    display: block;
-  }
-
   nav {
     display: none;
     flex-direction: column;
-    width: 100%;
-    background-color: #ff80b3; /* match your header color */
-    padding: 1rem 0;
-    text-align: center;
-    transition: all 0.3s ease;
+    background: #004aad;
+    position: absolute;
+    top: 60px;
+    right: 10px;
+    width: 150px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   }
-
-  nav.show {
-    display: flex;
-  }
-
   nav a {
-    padding: 0.8rem 0;
-    border-top: 1px solid rgba(255,255,255,0.2);
+    margin: 10px 0;
+    padding: 10px;
+    border-bottom: 1px solid #003d8a;
   }
-
   nav a:last-child {
-    border-bottom: 1px solid rgba(255,255,255,0.2);
+    border-bottom: none;
+  }
+  .hamburger {
+    display: block;
   }
 }
+
+
+
+
