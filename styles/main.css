@@ -311,6 +311,14 @@ button:hover{background:#003d8a}
   color: #003366;
 }
 
+/* Hamburger Icon */
+.hamburger {
+  display: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: white;
+}
+
 /* Mobile View */
 @media (max-width: 768px) {
   .hamburger {
