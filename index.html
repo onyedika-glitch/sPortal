@@ -11,6 +11,10 @@
 <header>
   <div class="container nav-bar">
     <h1 class="logo">School Board Portal</h1>
+     <!-- Hamburger Icon -->
+    <div class="hamburger" onclick="toggleMenu()">
+      ☰
+    </div>
     <nav>
       <a href="index.html" class="active">Home</a>
       <a href="announcements.html">Announcements</a>
@@ -104,6 +108,12 @@
 <footer>
   <p>© 2025 Federal School Board. All rights reserved. | Developed by the ICT Department</p>
 </footer>
+<script>
+  function toggleMenu() {
+    document.getElementById('nav-menu').classList.toggle('show');
+  }
+</script>
+
 
 </body>
 </html>

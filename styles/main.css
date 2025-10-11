@@ -310,3 +310,33 @@ button:hover{background:#003d8a}
 .archive-card h4 {
   color: #003366;
 }
+
+/* Mobile View */
+@media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+
+  nav {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    background-color: #ff80b3; /* match your header color */
+    padding: 1rem 0;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+
+  nav.show {
+    display: flex;
+  }
+
+  nav a {
+    padding: 0.8rem 0;
+    border-top: 1px solid rgba(255,255,255,0.2);
+  }
+
+  nav a:last-child {
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+  }
+}
