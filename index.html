@@ -115,15 +115,13 @@
     nav.classList.toggle('active');
   }
 
-  // Close menu when clicking outside
-  window.onclick = function(event) {
-    if (!event.target.matches('.hamburger')) {
-      const nav = document.querySelector('nav');
-      if (nav.classList.contains('active')) {
-        nav.classList.remove('active');
-      }
+  // Close menu when clicking outside (ignore clicks inside nav or on hamburger)
+  window.addEventListener('click', function(event) {
+    const nav = document.querySelector('nav');
+    if (!event.target.closest('.hamburger') && !event.target.closest('nav') && nav.classList.contains('active')) {
+      nav.classList.remove('active');
     }
-  };
+  });
 </script>
 
 

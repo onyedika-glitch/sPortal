@@ -331,6 +331,13 @@ button:hover{background:#003d8a}
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   }
+
+  /* ADDED: show nav when .active is present */
+  nav.active {
+    display: flex;
+    z-index: 1000;
+  }
+
   nav a {
     margin: 10px 0;
     padding: 10px;
