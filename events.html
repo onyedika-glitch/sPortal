@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Events - University School Board Portal</title>
+  <link rel="stylesheet" href="styles/main.css" />
+</head>
+<body>
+
+<header>
+  <div class="container nav-bar">
+    <h1 class="logo">University School Board Portal</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="announcements.html">Announcements</a>
+      <a href="events.html" class="active">Events</a>
+      <a href="calendar.html">Calendar</a>
+      <a href="timetable.html">Timetable</a>
+      <a href="results.html">Results</a>
+      <a href="auth.html">Login</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <section class="page-header">
+    <h2>🎉 Upcoming & Recent Events</h2>
+    <p>Stay informed about all university activities — academic conferences, social gatherings, board meetings, and more.</p>
+  </section>
+
+  <section class="search-section">
+    <input type="text" id="event-search" placeholder="🔍 Search events..." onkeyup="filterEvents()">
+  </section>
+
+  <section class="events-section" id="events-list">
+    <div class="event-card">
+      <h3>🏅 Inter-University Debate Championship</h3>
+      <p><strong>Date:</strong> November 12, 2025</p>
+      <p><strong>Venue:</strong> Main Auditorium</p>
+      <p><strong>Organizer:</strong> Department of English & Literary Studies</p>
+      <p class="desc">A platform for students across universities to showcase their debating and public speaking skills. Certificates and trophies will be awarded to the top teams.</p>
+    </div>
+
+    <div class="event-card">
+      <h3>🧪 Annual Science & Innovation Expo</h3>
+      <p><strong>Date:</strong> December 2–3, 2025</p>
+      <p><strong>Venue:</strong> University Research Complex</p>
+      <p><strong>Organizer:</strong> Faculty of Science & Technology</p>
+      <p class="desc">Students and lecturers will exhibit innovative research projects and technological prototypes. Industry experts will attend as judges and guests.</p>
+    </div>
+
+    <div class="event-card">
+      <h3>🎓 Matriculation Ceremony</h3>
+      <p><strong>Date:</strong> January 15, 2026</p>
+      <p><strong>Venue:</strong> Central Auditorium</p>
+      <p><strong>Organizer:</strong> Office of the Registrar</p>
+      <p class="desc">The official induction of newly admitted students into the university community. All freshers are expected to attend in academic gowns.</p>
+    </div>
+
+    <div class="event-card">
+      <h3>📖 University Research Week</h3>
+      <p><strong>Date:</strong> February 20–25, 2026</p>
+      <p><strong>Venue:</strong> Multipurpose Hall</p>
+      <p><strong>Organizer:</strong> Postgraduate School</p>
+      <p class="desc">A week-long program focused on academic presentations, research seminars, and collaborative projects across departments.</p>
+    </div>
+
+    <div class="event-card">
+      <h3>⚽ Staff vs Students Friendly Match</h3>
+      <p><strong>Date:</strong> March 3, 2026</p>
+      <p><strong>Venue:</strong> University Sports Complex</p>
+      <p><strong>Organizer:</strong> Sports Directorate</p>
+      <p class="desc">An annual tradition fostering unity between staff and students. Come support your side and enjoy a day filled with fun and refreshments.</p>
+    </div>
+  </section>
+
+  <section class="past-events">
+    <h2>📚 Past Events (Archive)</h2>
+    <div class="archive-grid">
+      <div class="archive-card">
+        <h4>Convocation Ceremony 2025</h4>
+        <p>Held on July 28, 2025 — Graduated 3,200 students.</p>
+      </div>
+      <div class="archive-card">
+        <h4>Faculty Research Summit</h4>
+        <p>June 10, 2025 — Innovations in AI and sustainable tech presented.</p>
+      </div>
+      <div class="archive-card">
+        <h4>Student Union Election</h4>
+        <p>April 15, 2025 — 60% voter turnout, peaceful and fair process.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>© 2025 Federal University School Board. All rights reserved.</p>
+</footer>
+
+<script>
+  // Simple search filter (frontend only)
+  function filterEvents() {
+    const query = document.getElementById('event-search').value.toLowerCase();
+    const events = document.querySelectorAll('.event-card');
+    events.forEach(card => {
+      const text = card.textContent.toLowerCase();
+      card.style.display = text.includes(query) ? '' : 'none';
+    });
+  }
+</script>
+
+</body>
+</html>

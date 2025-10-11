@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Login - School Board Portal</title>
+  <link rel="stylesheet" href="styles/main.css" />
+</head>
+<body>
+
+<main class="container auth">
+  <h2>Login to Dashboard</h2>
+  <form id="loginForm">
+    <label>Username</label>
+    <input type="text" id="username" required>
+
+    <label>Password</label>
+    <input type="password" id="password" required>
+
+    <button type="submit">Login</button>
+  </form>
+
+  <p class="small">No account? Register below</p>
+  <form id="registerForm">
+    <label>Choose Username</label>
+    <input type="text" id="regUser" required>
+
+    <label>Password</label>
+    <input type="password" id="regPass" required>
+
+    <button type="submit">Register</button>
+  </form>
+</main>
+
+<script>
+  const loginForm = document.getElementById('loginForm');
+  const registerForm = document.getElementById('registerForm');
+
+  registerForm.addEventListener('submit', e => {
+    e.preventDefault();
+    localStorage.setItem('username', document.getElementById('regUser').value);
+    alert('Registration successful! You can now log in.');
+  });
+
+  loginForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const user = document.getElementById('username').value;
+    if (user.trim() !== "") {
+      localStorage.setItem('username', user);
+      window.location.href = "dashboard.html";
+    } else {
+      alert('Enter a valid username!');
+    }
+  });
+</script>
+
+</body>
+</html>

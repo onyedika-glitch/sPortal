@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Profile - University School Board Portal</title>
+  <link rel="stylesheet" href="styles/main.css" />
+</head>
+<body>
+
+<header>
+  <div class="container nav-bar">
+    <h1 class="logo">University School Board Portal</h1>
+    <nav>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="profile.html" class="active">Profile</a>
+      <a href="results.html">Results</a>
+      <a href="#" onclick="logout()">Logout</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <section class="profile-header">
+    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Profile Picture" class="profile-pic">
+    <div class="profile-info">
+      <h2 id="profile-name">John Doe</h2>
+      <p><strong>Student ID:</strong> UST20251234</p>
+      <p><strong>Department:</strong> Computer Science</p>
+      <p><strong>Level:</strong> 400L</p>
+      <p><strong>Status:</strong> Active</p>
+      <button class="edit-btn" onclick="toggleEdit()">Edit Profile</button>
+    </div>
+  </section>
+
+  <section class="profile-details">
+    <div class="card">
+      <h3>📘 Personal Information</h3>
+      <p><strong>Full Name:</strong> <span id="fullname">John Doe</span></p>
+      <p><strong>Email:</strong> <span id="email">student@university.edu.ng</span></p>
+      <p><strong>Phone:</strong> <span id="phone">+234 812 345 6789</span></p>
+      <p><strong>Address:</strong> <span id="address">University Hostel, Block B, Room 203</span></p>
+    </div>
+
+    <div class="card">
+      <h3>🎓 Academic Information</h3>
+      <p><strong>Faculty:</strong> Science and Technology</p>
+      <p><strong>Department:</strong> Computer Science</p>
+      <p><strong>Program:</strong> B.Sc Computer Science</p>
+      <p><strong>CGPA:</strong> 3.84</p>
+      <p><strong>Advisor:</strong> Dr. (Mrs.) N. Okafor</p>
+    </div>
+
+    <div class="card">
+      <h3>📅 Recent Activity</h3>
+      <ul>
+        <li>Checked semester results - Oct 8, 2025</li>
+        <li>Viewed timetable for new session - Oct 5, 2025</li>
+        <li>Registered for CSC402 - Oct 2, 2025</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>© 2025 Federal University School Board. All rights reserved.</p>
+</footer>
+
+<script>
+  // Load user
+  const user = localStorage.getItem('username');
+  if (!user) window.location.href = "auth.html";
+  document.getElementById('profile-name').textContent = user;
+  document.getElementById('fullname').textContent = user;
+
+  // Logout
+  function logout() {
+    localStorage.removeItem('username');
+    window.location.href = "auth.html";
+  }
+
+  // Edit function (mock)
+  function toggleEdit() {
+    alert("Profile editing is not yet active. Contact your department administrator for updates.");
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Dashboard - School Board Portal</title>
+  <link rel="stylesheet" href="styles/main.css" />
+</head>
+<body>
+
+<header>
+  <div class="container nav-bar">
+    <h1 class="logo">School Board Portal</h1>
+    <nav>
+      <a href="dashboard.html" class="active">Dashboard</a>
+      <a href="index.html" class="active">Home</a>
+      <a href="announcements.html">Announcements</a>
+      <a href="events.html">Events</a>
+      <a href="calendar.html">Calendar</a>
+      <a href="timetable.html">Timetable</a>
+      <a href="results.html">Results</a>
+      <a href="auth.html">Login</a>
+      <a href="profile.html">Profile</a>
+      <a href="results.html">Results</a>
+      <a href="#" onclick="logout()">Logout</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <section class="welcome-section">
+    <h2>Welcome back, <span id="user-name"></span> 👋</h2>
+    <p class="intro-text">
+      Here’s an overview of your activities and important updates from the School Board.  
+      Use the cards below to quickly navigate through your portal.
+    </p>
+  </section>
+
+  <section class="stats-grid">
+    <div class="stat-card">
+      <h3>🗓 Upcoming Events</h3>
+      <p><strong>3</strong> events this week</p>
+      <a href="events.html" class="btn">View Events</a>
+    </div>
+
+    <div class="stat-card">
+      <h3>📢 Announcements</h3>
+      <p>2 new announcements posted</p>
+      <a href="announcements.html" class="btn">Read More</a>
+    </div>
+
+    <div class="stat-card">
+      <h3>📊 Latest Results</h3>
+      <p>Your last exam: <strong>82%</strong> average</p>
+      <a href="results.html" class="btn">Check Results</a>
+    </div>
+
+    <div class="stat-card">
+      <h3>🕒 Timetable</h3>
+      <p>Next class: Monday 9:00 AM</p>
+      <a href="timetable.html" class="btn">View Timetable</a>
+    </div>
+  </section>
+
+  <section class="dashboard-cards">
+    <h2>Quick Access</h2>
+    <div class="card-grid">
+      <div class="card">
+        <h3>📅 Events Calendar</h3>
+        <p>Stay updated on upcoming activities and academic schedules.</p>
+        <a href="calendar.html" class="card-link">Go to Calendar</a>
+      </div>
+
+      <div class="card">
+        <h3>📚 Timetable</h3>
+        <p>Access your class and exam schedules easily in one place.</p>
+        <a href="timetable.html" class="card-link">Open Timetable</a>
+      </div>
+
+      <div class="card">
+        <h3>📋 Announcements</h3>
+        <p>View the latest updates from the school board.</p>
+        <a href="announcements.html" class="card-link">View Announcements</a>
+      </div>
+
+      <div class="card">
+        <h3>🎉 Event Archives</h3>
+        <p>Explore previous events and photo highlights.</p>
+        <a href="archive.html" class="card-link">See Archive</a>
+      </div>
+
+      <div class="card">
+        <h3>👤 Profile</h3>
+        <p>View or edit your personal information and settings.</p>
+        <a href="profile.html" class="card-link">Edit Profile</a>
+      </div>
+
+      <div class="card">
+        <h3>🔐 Logout</h3>
+        <p>Securely end your session.</p>
+        <a href="#" class="card-link" onclick="logout()">Logout</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>© 2025 Federal School Board. All rights reserved.</p>
+</footer>
+
+<script>
+  // Load fake username from localStorage
+  const name = localStorage.getItem('username');
+  if (!name) window.location.href = "auth.html";
+  document.getElementById('user-name').textContent = name;
+
+  // Logout function
+  function logout() {
+    localStorage.removeItem('username');
+    window.location.href = "auth.html";
+  }
+</script>
+
+</body>
+</html>
